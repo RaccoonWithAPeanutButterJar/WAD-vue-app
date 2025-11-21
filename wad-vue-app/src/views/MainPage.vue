@@ -1,30 +1,34 @@
 <template>
   <div>
-    <HeaderComponent />
-    <main>
-      <PostList />
+    <Header />
+    <main class="content">
+      <UserPost
+        v-for="post in allPosts"
+        :key="post.postId"
+        :post="post"
+      />
     </main>
-    <FooterComponent />
+    <Footer />
   </div>
 </template>
 
 <script>
-import HeaderComponent from "@/components/Header.vue";
-import PostList from "@/components/PostList.vue";
-import FooterComponent from "@/components/Footer.vue";
+import { mapGetters } from 'vuex'
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
+import UserPost from '@/components/Post.vue'
 
 export default {
-  name: "MainPage",
-  components: {
-    HeaderComponent,
-    PostList,
-    FooterComponent
+  name: 'MainPage',
+  components: { Header, Footer, UserPost },
+  computed: {
+    ...mapGetters(['allPosts'])
   }
-};
+}
 </script>
 
-<style>
-main {
-  padding: 1rem;
+<style scoped>
+.content {
+  padding: 2rem;
 }
 </style>
