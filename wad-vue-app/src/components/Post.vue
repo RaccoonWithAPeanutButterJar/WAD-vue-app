@@ -12,6 +12,12 @@
     </div>
 
     <footer class="postfooter">
+      <button @click="incrementLikes" class="like-button">
+      👍
+      </button>
+      
+        <p>Likes: {{ post.likes }}</p>
+      
     </footer>
   </div>
 </template>
@@ -29,8 +35,17 @@ export default {
     formattedTime() {
       return new Date(this.post.postTime).toLocaleDateString()
     }
+  },
+
+  data() {
+    return {};
+  },
+  methods: {
+    incrementLikes() {
+      this.$store.commit('INCREMENT_LIKES', this.post.postId)
+    }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -48,6 +63,20 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+}
+.postfooter {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 15px;
+  max-width: none;
+  text-align: center;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 20px;
+  padding-top: 10px;
 }
 .profilepic {
   width: 50px;
@@ -72,5 +101,20 @@ export default {
   max-width: 100%;
   margin-top: 0.5rem;
   border-radius: 8px;
+}
+.like-button {
+  padding: 8px 15px;
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  text-align: left;
+}
+.like-button:hover {
+  background-color: #0056b3;
+  text-align: right;
 }
 </style>
