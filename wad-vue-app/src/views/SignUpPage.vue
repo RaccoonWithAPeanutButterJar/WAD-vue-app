@@ -8,14 +8,16 @@
 
       <form class="signup-form">
         <label>
-          Username:
-          <input type="text" v-model="username" required />
+          Email:
+          <input type="email" v-model="email" placeholder="email" required />
         </label>
 
         <label>
           Password:
-          <input type="password" v-model="password" required />
+          <input type="password" v-model="password" placeholder="password" required />
         </label>
+
+        <p v-if="passwordError" class="password-error">{{ passwordError }}</p>
 
         <button @click.prevent="signup">Sign Up</button>
       </form>
@@ -34,13 +36,52 @@ export default {
   components: { Header, Footer },
   data() {
     return {
-      username: "",
-      password: ""
+      email: "",
+      password: "",
+      passwordError: ""
     };
   },
   methods: {
     signup() {
-      alert(`Signed up as: ${this.username}`);
+      this.passwordError = "";
+      const errors = this.getPasswordErrors(this.password);
+
+      if (errors.length) {
+        this.passwordError = "the password is not valid - " + errors.join(", ");
+        return;
+      }
+      alert(`Signed up with: ${this.email}`);
+    },
+
+    getPasswordErrors(pwd) {
+      const errs = [];
+
+      if (!(pwd.length >= 8 && pwd.length < 15)) {
+        errs.push("Length must be at least 8 and less than 15 characters");
+      }
+
+      if (!/^[A-Z]/.test(pwd)) {
+        errs.push("Starts with an uppercase letter");
+      }
+
+      if (!/[A-Z]/.test(pwd)) {
+        errs.push("Includes at least one uppercase alphabet character");
+      }
+
+      const lowerCount = (pwd.match(/[a-z]/g) || []).length;
+      if (lowerCount < 2) {
+        errs.push("Includes at least two lowercase alphabet characters");
+      }
+
+      if (!/\d/.test(pwd)) {
+        errs.push("Includes at least one numeric value");
+      }
+
+      if (!/_/.test(pwd)) {
+        errs.push("Includes the character '_'");
+      }
+
+      return [...new Set(errs)];
     }
   }
 }
@@ -100,5 +141,15 @@ export default {
 
 .signup-form button:hover {
   background: #ff5555;
+}
+
+.password-error {
+  color: #ffcccc;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 </style>

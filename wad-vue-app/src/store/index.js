@@ -89,7 +89,10 @@ const store = createStore({
     allPosts: state => state.posts
   },
   mutations: {},
-  actions: {}
-})
+  actions: {
+  signup({ commit }, payload) {
+    commit('ADD_USER', payload);
+  }
+}})
 
 export default store

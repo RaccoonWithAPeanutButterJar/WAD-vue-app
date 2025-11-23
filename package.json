@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "vue-router": "^4.6.3",
+    "vuex": "^4.0.2"
+  }
+}
