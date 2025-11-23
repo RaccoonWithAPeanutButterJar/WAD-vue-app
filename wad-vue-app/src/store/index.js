@@ -9,7 +9,8 @@ const store = createStore({
         authorName: "Alice",
         profileImage: "https://www.placecats.com/neo/300/200",
         postContent: "Just finished my first coding project today!",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 2,
@@ -17,7 +18,8 @@ const store = createStore({
         authorName: "Bob",
         profileImage: "https://media.tenor.com/1W-HKNvj8UoAAAAe/cat.png",
         postContent: "Good for you Alice!",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 3,
@@ -25,7 +27,8 @@ const store = createStore({
         authorName: "Charlie",
         profileImage: "https://stickerrs.com/wp-content/uploads/2024/03/Cat-Meme-Stickers-Featured.png",
         postContent: "What kind of dog is this?",
-        postImage: "https://petapixel.com/assets/uploads/2024/03/hedgehog-featured-image.jpg"
+        postImage: "https://petapixel.com/assets/uploads/2024/03/hedgehog-featured-image.jpg",
+        likes: 0
     },
     {
         postId: 4,
@@ -33,7 +36,8 @@ const store = createStore({
         authorName: "Diana",
         profileImage: "https://media.tenor.com/CNI1fSM1XSoAAAAe/shocked-surprised.png",
         postContent: "Charlie you muppet that is not a dog.",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 5,
@@ -41,7 +45,8 @@ const store = createStore({
         authorName: "Ethan",
         profileImage: "https://i.pinimg.com/736x/b2/60/94/b26094970505bcd59c2e5fe8b6f41cf0.jpg",
         postContent: "When was the deadline for the next ItDS homework, anybody know?",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 6,
@@ -49,7 +54,8 @@ const store = createStore({
         authorName: "Fiona",
         profileImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnim2syXRUAOjKSHPaQ9RCabQQexcOU8qyJA&s",
         postContent: "It was like 5 days ago",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 7,
@@ -57,7 +63,8 @@ const store = createStore({
         authorName: "Ethan",
         profileImage: "https://i.pinimg.com/736x/b2/60/94/b26094970505bcd59c2e5fe8b6f41cf0.jpg",
         postContent: "...Im so cooked",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 8,
@@ -65,7 +72,8 @@ const store = createStore({
         authorName: "Hannah",
         profileImage: "https://i.ytimg.com/vi/qPTd10946jo/maxresdefault.jpg",
         postContent: "Anyone got a pen to borrow, I still need one.",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 9,
@@ -73,7 +81,8 @@ const store = createStore({
         authorName: "Ian",
         profileImage: "https://i.ytimg.com/vi/eXwZMAz9Vh8/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAVeD81lYf_ygdk1dICZMM1AtEY0w",
         postContent: "Yes, I do but I won't give it to you",
-        postImage: null
+        postImage: null,
+        likes: 0
     },
     {
         postId: 10,
@@ -81,18 +90,35 @@ const store = createStore({
         authorName: "Hannah",
         profileImage: "https://i.ytimg.com/vi/qPTd10946jo/maxresdefault.jpg",
         postContent: "I swear to god im never gonna get a pen, am I?",
-        postImage: null
+                postImage: null,
+                likes: 0
     },
     ]
   },
   getters: {
     allPosts: state => state.posts
   },
+<<<<<<< HEAD
   mutations: {},
   actions: {
   signup({ commit }, payload) {
     commit('ADD_USER', payload);
   }
 }})
+=======
+    mutations: {
+        INCREMENT_LIKES(state, postId) {
+            const post = state.posts.find(p => p.postId === postId)
+            if (post) post.likes += 1
+        },
+        RESET_LIKES(state) {
+            state.posts.forEach(p => {
+                p.likes = 0
+            })
+        }
+    },
+    actions: {}
+})
+>>>>>>> 6a4b99aa3ddf5c155a482237c3590e794d600ba2
 
 export default store
