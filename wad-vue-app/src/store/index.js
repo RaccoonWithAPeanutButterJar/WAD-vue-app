@@ -98,14 +98,6 @@ const store = createStore({
   getters: {
     allPosts: state => state.posts
   },
-<<<<<<< HEAD
-  mutations: {},
-  actions: {
-  signup({ commit }, payload) {
-    commit('ADD_USER', payload);
-  }
-}})
-=======
     mutations: {
         INCREMENT_LIKES(state, postId) {
             const post = state.posts.find(p => p.postId === postId)
@@ -119,6 +111,5 @@ const store = createStore({
     },
     actions: {}
 })
->>>>>>> 6a4b99aa3ddf5c155a482237c3590e794d600ba2
 
 export default store
