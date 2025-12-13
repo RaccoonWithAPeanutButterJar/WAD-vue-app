@@ -16,8 +16,7 @@
       👍
       </button>
       
-        <p>Likes: {{ post.likes }}</p>
-      
+      <p>Likes: {{ post.likes }}</p>
     </footer>
   </div>
 </template>
@@ -35,10 +34,6 @@ export default {
     formattedTime() {
       return new Date(this.post.postTime).toLocaleDateString()
     }
-  },
-
-  data() {
-    return {};
   },
   methods: {
     incrementLikes() {
