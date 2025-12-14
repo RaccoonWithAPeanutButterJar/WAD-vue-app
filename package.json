@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "pg": "^8.16.3",
     "vue-router": "^4.6.3",
     "vuex": "^4.0.2"
   }

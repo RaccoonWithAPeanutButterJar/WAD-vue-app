@@ -1,70 +1,119 @@
-// Chris, siia tuleb panna andmebaasi query'd (selle let posts asemel)
-let posts = [
-  {
-    postId: 1,
-    postTime: "2025-10-01T08:30:00Z",
-    authorName: "Alice",
-    profileImage: "https://placekitten.com/100/100",
-    postContent: "Just finished my first coding project today!"
-  }
-];
+const pool = require('../database');
 
-// Helper to create default post object
-function createPost({ authorName, profileImage, postContent, postImage }) {
-  return {
-    postId: Date.now(), // unique id
-    postTime: new Date().toISOString(),
-    authorName: authorName || 'Anonymous',
-    profileImage: profileImage || 'https://placekitten.com/100/100',
-    postContent: postContent || ''
-  };
-}
+const postQuerySelect = `
+    SELECT 
+        id AS "postId", 
+        post_time AS "postTime", 
+        author_name AS "authorName", 
+        profile_image AS "profileImage", 
+        post_content AS "postContent" 
+    FROM posttable`;
 
-// READ
-exports.getAllPosts = (req, res) => {
-  res.json(posts);
+// READ all posts
+exports.getAllPosts = async (req, res) => {
+    try {
+        const result = await pool.query(`${postQuerySelect} ORDER BY post_time DESC`);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Database query failed:", err.message);
+        res.status(500).json({ error: 'Failed to retrieve posts.' });
+    }
 };
 
-exports.getPost = (req, res) => {
-  const id = Number(req.params.id);
-  const post = posts.find(p => p.postId === id);
-  if (!post) return res.status(404).json({ error: 'Post not found' });
-  res.json(post);
+// READ a single post
+exports.getPost = async (req, res) => {
+    const id = Number(req.params.id);
+    try {
+        const result = await pool.query(`${postQuerySelect} WHERE id = $1`, [id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(400).json({ error: 'Post not found' });
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error("Database query failed:", err.message);
+        res.status(500).json({ error: 'Failed to retrieve post.' });
+    }
 };
 
-// CREATE
-exports.createPost = (req, res) => {
-  const { authorName, profileImage, postContent} = req.body;
-  const newPost = createPost({ authorName, profileImage, postContent });
+// CREATE a new post
+exports.createPost = async (req, res) => {
+    const { authorName, profileImage, postContent } = req.body;
+    
+    if (!authorName || !postContent) {
+        return res.status(400).json({ error: 'Author name and post content are required.' });
+    }
+    
+    try {
+        const queryText = `
+            INSERT INTO posttable(author_name, profile_image, post_content) 
+            VALUES ($1, $2, $3) 
+            RETURNING id AS "postId", post_time AS "postTime", author_name AS "authorName", profile_image AS "profileImage", post_content AS "postContent"`;
+            
+        const values = [authorName, profileImage, postContent];
+        const result = await pool.query(queryText, values);
 
-  posts.push(newPost);
-  res.status(201).json(newPost);
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error("Database INSERT failed:", err.message);
+        res.status(500).json({ error: 'Failed to create post in database.' });
+    }
 };
 
-// UPDATE
-exports.updatePost = (req, res) => {
-  const id = Number(req.params.id);
-  const index = posts.findIndex(p => p.postId === id);
-  if (index === -1) return res.status(404).json({ error: 'Post not found' });
+// UPDATE an existing post
+exports.updatePost = async (req, res) => {
+    const id = Number(req.params.id);
+    const { authorName, profileImage, postContent } = req.body;
+    
+    try {
+        const queryText = `
+            UPDATE posttable 
+            SET 
+                author_name = COALESCE($2, author_name),
+                profile_image = COALESCE($3, profile_image),
+                post_content = COALESCE($4, post_content),
+                post_time = NOW()
+            WHERE id = $1
+            RETURNING id AS "postId", post_time AS "postTime", author_name AS "authorName", profile_image AS "profileImage", post_content AS "postContent"`;
+            
+        const values = [id, authorName, profileImage, postContent];
+        const result = await pool.query(queryText, values);
 
-  const updated = {
-    ...posts[index],
-    ...req.body,
-    postTime: new Date().toISOString() // update timestamp
-  };
-  posts[index] = updated;
-  res.json(updated);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error("Database UPDATE failed:", err.message);
+        res.status(500).json({ error: 'Failed to update post.' });
+    }
 };
 
-// DELETE
-exports.deletePost = (req, res) => {
-  const postId = Number(req.params.id);
-  posts = posts.filter(p => p.id !== postId);
+// DELETE a single post
+exports.deletePost = async (req, res) => {
+    const postId = Number(req.params.id);
+    
+    try {
+        const result = await pool.query('DELETE FROM posttable WHERE id = $1 RETURNING id', [postId]);
 
-  res.json({ message: 'Post deleted' });
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        
+        res.json({ message: `Post with ID ${postId} deleted` });
+    } catch (err) {
+        console.error("Database DELETE failed:", err.message);
+        res.status(500).json({ error: 'Failed to delete post.' });
+    }
 };
 
-exports.deleteAllPosts = (req, res) => {
-  posts = [];
-  res.json({ message: 'Posts deleted' });
+// DELETE all posts
+exports.deleteAllPosts = async (req, res) => {
+    try {
+        await pool.query('DELETE FROM posttable');
+        res.json({ message: 'All posts deleted' });
+    } catch (err) {
+        console.error("Database DELETE failed:", err.message);
+        res.status(500).json({ error: 'Failed to delete all posts.' });
+    }
 };
