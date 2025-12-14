@@ -7,7 +7,6 @@
 
       <div class="auth-links">
         <template v-if="isAuthenticated">
-          <button @click="goAdd" class="add-post-button">Add post</button>
           <span class="user-email">{{ userEmail }}</span>
           <button @click="logout" class="logout-button">Logout</button>
         </template>
@@ -40,10 +39,6 @@ export default {
     logout() {
       this.$store.dispatch('logout');
       this.$router.push({ name: 'Login' });
-    },
-    goAdd() {
-      // navigeeri AddPost route'i
-      this.$router.push({ name: 'AddPost' });
     }
   }
 };
@@ -64,17 +59,6 @@ export default {
 .auth-links { display:flex; gap:0.75rem; align-items:center; }
 a { color: white; text-decoration: none; }
 .user-email { color: #fff; margin-right:8px; font-weight:500; }
-
-.add-post-button {
-  background-color: #2d8f2d;
-  color: white;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.add-post-button:hover { background-color: #35b035; }
-
 .reset-likes-button, .logout-button {
   background-color: #ff3333;
   color: white;

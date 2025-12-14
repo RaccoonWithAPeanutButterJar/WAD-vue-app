@@ -1,21 +1,21 @@
 <template>
   <div class="post">
     <header class="postheader">
-      <img :src="post.profileImage" class="profilepic" />
+      <img :src="post.profileImage" class="profilepic" alt="profile" />
       <span class="author-name">{{ post.authorName }}</span>
       <span class="post-time">{{ formattedTime }}</span>
     </header>
 
     <div class="postbody">
       <p>{{ post.postContent }}</p>
-      <img v-if="post.postImage" :src="post.postImage" class="post-image" />
+      <img v-if="post.postImage" :src="post.postImage" class="post-image" alt="post image" />
     </div>
 
     <footer class="postfooter">
-      <button @click="incrementLikes" class="like-button">
-      👍
+      <!-- .stop prevents the like button click from bubbling up to the parent (which navigates to post view) -->
+      <button @click.stop="incrementLikes" class="like-button" aria-label="Like">
+        👍
       </button>
-      
       <p>Likes: {{ post.likes }}</p>
     </footer>
   </div>
@@ -32,12 +32,18 @@ export default {
   },
   computed: {
     formattedTime() {
-      return new Date(this.post.postTime).toLocaleDateString()
+      // safe: if postTime missing, return empty string
+      return this.post && this.post.postTime
+        ? new Date(this.post.postTime).toLocaleDateString()
+        : '';
     }
   },
   methods: {
     incrementLikes() {
-      this.$store.commit('INCREMENT_LIKES', this.post.postId)
+      // commit directly to store (store mutation INCREMENT_LIKES must exist)
+      if (this.post && this.post.postId != null) {
+        this.$store.commit('INCREMENT_LIKES', this.post.postId);
+      }
     }
   }
 };
@@ -58,20 +64,15 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+  gap: 12px;
 }
 .postfooter {
-  padding: 20px;
-  border: 1px solid #ccc;
+  padding: 12px;
   border-radius: 8px;
-  margin-top: 15px;
-  max-width: none;
-  text-align: center;
-
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  padding-bottom: 20px;
-  padding-top: 10px;
+  align-items: center;
 }
 .profilepic {
   width: 50px;
@@ -91,6 +92,7 @@ export default {
 }
 .postbody p {
   margin: 0.5rem 0;
+  white-space: pre-wrap;
 }
 .post-image {
   max-width: 100%;
@@ -105,11 +107,8 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  margin-top: 10px;
-  text-align: left;
 }
 .like-button:hover {
-  background-color: #0056b3;
-  text-align: right;
+  background-color: rgba(0,86,179,0.12);
 }
 </style>

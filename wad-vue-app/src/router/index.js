@@ -1,21 +1,22 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
 
 import LoginView from '../views/Login.vue';
-import SignUpView from '../views/SignUp.vue'; // <-- CASE SENSITIVE: kui fail on SignUp.vue
+import SignUpView from '../views/SignUp.vue'; // CASE-SENSITIVE: kas SignUp.vue või Signup.vue
 import ContactView from '../views/Contact.vue';
 import MainPage from '../views/MainPage.vue';
 import AddPostView from '../views/AddPost.vue';
 import PostView from '../views/Post.vue';
 
 const routes = [
-  { path: '/', redirect: '/login' },
+  // Root now shows MainPage with login overlay when unauthenticated
+  { path: '/', name: 'Root', component: MainPage },
 
   { path: '/login', name: 'Login', component: LoginView },
   { path: '/signup', name: 'Signup', component: SignUpView },
   { path: '/contact', name: 'Contact', component: ContactView },
 
+  // protected home (you can keep this, but '/' is the landing page)
   { path: '/home', name: 'Home', component: MainPage, meta: { requiresAuth: true } },
   { path: '/add', name: 'AddPost', component: AddPostView, meta: { requiresAuth: true } },
   { path: '/posts/:id', name: 'Post', component: PostView, meta: { requiresAuth: true } }
