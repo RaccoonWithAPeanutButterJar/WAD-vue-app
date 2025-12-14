@@ -16,8 +16,6 @@
           <router-link to="/signup">Signup</router-link>
         </template>
       </div>
-
-      <button @click="resetLikes" class="reset-likes-button">Reset Likes</button>
     </nav>
   </header>
 </template>
@@ -34,9 +32,6 @@ export default {
     }
   },
   methods: {
-    resetLikes() {
-      this.$store.commit('RESET_LIKES')
-    },
     logout() {
       this.$store.dispatch('logout');
       this.$router.push({ name: 'Login' });

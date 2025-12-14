@@ -1,7 +1,7 @@
 <template>
   <div class="post">
     <header class="postheader">
-      <img :src="post.profileImage" class="profilepic" />
+      <img v-if="post.profileImage" :src="post.profileImage" class="profilepic" />
       <span class="author-name">{{ post.authorName }}</span>
       <span class="post-time">{{ formattedTime }}</span>
     </header>
@@ -12,11 +12,6 @@
     </div>
 
     <footer class="postfooter">
-      <button @click="incrementLikes" class="like-button">
-      👍
-      </button>
-      
-      <p>Likes: {{ post.likes }}</p>
     </footer>
   </div>
 </template>
@@ -35,11 +30,7 @@ export default {
       return new Date(this.post.postTime).toLocaleDateString()
     }
   },
-  methods: {
-    incrementLikes() {
-      this.$store.commit('INCREMENT_LIKES', this.post.postId)
-    }
-  }
+  methods: {}
 };
 </script>
 
