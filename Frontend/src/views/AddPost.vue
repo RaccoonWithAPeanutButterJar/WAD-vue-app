@@ -5,21 +5,12 @@
       <h2>Add Post</h2>
 
       <form @submit.prevent="onAdd">
-        <label>Author name</label>
-        <input v-model="authorName" placeholder="Your name" />
-
-        <label>Profile image URL (optional)</label>
-        <input v-model="profileImage" placeholder="https://..." />
-
-        <label>Post text</label>
-        <textarea v-model="postContent" rows="6" required></textarea>
-
-        <label>Post image URL (optional)</label>
-        <input v-model="postImage" placeholder="https://..." />
+        <label for="content">Post content</label>
+        <textarea id="content" v-model="postContent" rows="6" required></textarea>
 
         <div class="controls">
-          <button type="submit">Add</button>
-          <button type="button" @click="cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add</button>
+          <button type="button" @click="cancel" class="btn btn-ghost">Cancel</button>
         </div>
       </form>
 
@@ -36,10 +27,7 @@ export default {
   components: { Header },
   data() {
     return {
-      authorName: this.$store.state.userEmail || '',
-      profileImage: '',
       postContent: '',
-      postImage: '',
       error: ''
     };
   },
@@ -50,18 +38,11 @@ export default {
         this.error = 'Post content is required';
         return;
       }
-
       try {
-        // teeme objekti vastavalt store'i eeldustele (postId genereerib store)
-        const payload = {
-          authorName: this.authorName || this.$store.state.userEmail || 'You',
-          profileImage: this.profileImage || '',
-          postContent: this.postContent,
-          postImage: this.postImage || null,
-          likes: 0
-        };
-        await this.$store.dispatch('addPost', payload);
-        // navigeeri home peale
+        // store expects object with postContent etc. Our store.addPost handles payload object.
+        await this.$store.dispatch('addPost', { postContent: this.postContent });
+        // pÃ¤rast lisamist fetch ja suuna home peale
+        await this.$store.dispatch('fetchPosts');
         this.$router.push({ name: 'Home' });
       } catch (e) {
         this.error = e.message || 'Failed to add post';
@@ -75,9 +56,10 @@ export default {
 </script>
 
 <style scoped>
-.container { max-width:800px; margin:12px auto; padding:12px }
-input, textarea { width:100%; padding:8px; margin-top:6px; box-sizing:border-box; }
+.container { max-width:800px; margin:12px auto; padding:12px; }
+textarea { width:100%; padding:8px; box-sizing:border-box; background:#0f0f0f; color:#fff; border-radius:6px; border:1px solid #333 }
 .controls { margin-top:8px; display:flex; gap:8px }
-.error { color:red; margin-top:8px }
-button { padding:8px 12px; }
+.btn-primary { background:#ff3333; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer }
+.btn-ghost { background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.12); padding:8px 12px; border-radius:6px; cursor:pointer }
+.error { color:#ff8888; margin-top:8px }
 </style>
